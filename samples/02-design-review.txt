@@ -1,0 +1,8 @@
+Meeting: Billing UI Design Review
+Date: 2026-08-11
+[09:02] Ploy: Sharing the new invoice screen now.
+[09:05] K. Somchai: We agreed the summary panel stays collapsed by default.
+[09:09] Anna: Go-live is locked for 2026-08-18, no movement on that.
+[09:14] Ploy: Ravi will finish the empty-state illustrations by 2026-08-25.
+[09:18] Anna: We also need to rewrite the error copy, please handle it next Friday.
+[09:22] somchai: I'll review the final Figma before handoff.

@@ -1,0 +1,13 @@
+Meeting: Sprint 24 Planning
+Date: 2026-08-10
+Attendees: Somchai, Ploy, Anna, Ravi
+
+Topic 1: Checkout rewrite
+Somchai: We looked at the two options again and we agreed to go with the incremental rewrite.
+Anna: Somchai will draft the migration plan by 2026-08-14.
+Ploy: I'll take the API contract review.
+Ravi: Someone needs to update the staging seed data before we start.
+
+Topic 2: Payment provider
+Anna: The decision is to stay with the current provider for this quarter.
+Ravi: Anna will send the renewal paperwork by 2026-08-20.
