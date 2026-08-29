@@ -10,6 +10,7 @@
     "build": "npm run build --workspace=backend && npm run build --workspace=frontend",
     "test": "npm run test --workspace=backend",
     "test:e2e": "npm run test --workspace=e2e",
-    "lint": "tsc --noEmit -p backend && tsc --noEmit -p frontend"
+    "lint": "tsc --noEmit -p backend && tsc --noEmit -p frontend",
+    "docs": "npm run docs --workspace=backend"
   }
 }
