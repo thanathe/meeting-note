@@ -237,6 +237,7 @@ The assignment asks that every change to `CLAUDE.md` be explained here.
 ## Requirements
 
 - Node.js 20+ — the app itself runs on 18, but Playwright refuses to start below 20,
-  so `npm run test:e2e` needs 20 or newer.
+  so `npm run test:e2e` needs 20 or newer. Declared in `engines` and in `.nvmrc`, so
+  `nvm use` picks the right version; npm warns rather than blocks if you are below it.
 - `npx playwright install chromium`, once, before the first E2E run.
 - `ANTHROPIC_API_KEY` (optional — only for LLM distillation).

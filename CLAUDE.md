@@ -85,8 +85,9 @@ npm run test:e2e
 npm run docs
 ```
 
-`npm run test:e2e` refuses to start on Node 18. Use Node 20 or newer, and run
-`npx playwright install chromium` once before the first E2E run.
+`npm run test:e2e` refuses to start on Node 18. Use Node 20 or newer — `nvm use`
+reads `.nvmrc` — and run `npx playwright install chromium` once before the first
+E2E run.
 
 ## Domain vocabulary
 
