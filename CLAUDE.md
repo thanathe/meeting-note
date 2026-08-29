@@ -25,6 +25,35 @@ The system is a three-layer extraction pipeline. See `docs/adr/0001-three-layer-
 
 After distillation, `rollup.ts` groups action items by owner across the entire run, and `docx.ts` builds the Word document export.
 
+## Tech stack
+
+| Area | Choice |
+|------|--------|
+| Language | TypeScript 5.6, strict mode, ESM throughout (`"type": "module"`) |
+| Runtime | Node.js 20+ (the app runs on 18; Playwright does not) |
+| Repo | npm workspaces — `backend`, `frontend`, `e2e`. One lockfile: `package-lock.json` |
+| Backend | Express 4, multer (in-memory uploads), `tsx` in dev |
+| LLM | `@anthropic-ai/sdk`, optional, only reachable from `distill.claude.ts` |
+| Frontend | React 18 + Vite 5, no UI framework, plain CSS in `styles.css` |
+| Exports | `docx` for the Word download, `exceljs` for the generated workbooks |
+| Unit tests | vitest, offline |
+| E2E | Playwright (Chromium) |
+
+Adding a dependency needs a reason that is written down. The pipeline is deliberately
+plain — regexes and standard library, no NLP or date-parsing library — because the
+extraction rules are the thing under test and an opaque library would hide them.
+
+## Coding style
+
+- **Strict TypeScript, no `any`.** Use `import type` for type-only imports.
+- **Named exports.** Default exports only where a tool demands one (`vite.config.ts`, `playwright.config.ts`).
+- 2-space indent, single quotes, semicolons, trailing commas, lines up to ~110 columns. Match the surrounding file; there is no formatter in CI.
+- **Types live in `types.ts`,** never inline in a module that uses them. `backend/src/types.ts` is canonical.
+- **Cue patterns are module-level `SCREAMING_SNAKE` constants** at the top of the file (`TOPIC_CUE`, `ACTION_CUE`, `META_KEYS`). Never inline a regex in a branch — the patterns are the spec, keep them readable together.
+- **Each layer is pure functions over the previous layer's output.** No hidden state, no I/O below `server.ts`.
+- **Comments say why, not what.** Prefer a line that names the rule or the requirement it protects ("Relative phrasing is deliberately NOT resolved — the Analyze layer flags it") over one that restates the code.
+- **Test names read as sentences** — `flags a meeting whose topics reached no decision`, not `test no decision`. They are lifted verbatim into the generated test-case workbooks.
+
 ## Running
 
 ```bash
