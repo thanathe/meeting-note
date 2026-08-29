@@ -112,7 +112,7 @@ Always use the terms from `CONTEXT.md`. The code types in `backend/src/types.ts`
 - **Bilingual support.** Regexes and cue patterns intentionally mix Thai and English. Sample transcripts include both.
 - **`npm test` runs offline.** No network, no API key. All testable behaviour lives in Parse or Analyze. The Distill layer has a fixture-backed fake.
 - **E2E assertions are about meaning, not incidental counts.** Assert on `.flag-no_decision`, or on the owner names, rather than on how many `.flag` or `.owner-card` elements happen to render. A count-based assertion breaks on every Distill change and tells you nothing about what went wrong.
-- **`docs/generated/` is build output.** Never hand-edit a `.docx` or `.xlsx` in there. Change `backend/scripts/requirements.ts` (or the tests themselves) and re-run `npm run docs`.
+- **`docs/generated/` is build output.** Never hand-edit a `.docx` or `.xlsx` in there. Change `backend/scripts/requirements.ts` (or the tests themselves) and re-run `npm run docs`. Regenerating always restamps an embedded timestamp, so all three files show as modified even when the content is identical — only commit them when the content actually changed.
 
 ## File ownership
 

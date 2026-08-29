@@ -52,6 +52,14 @@ describe('participants', () => {
     expect(parsed.turns[0].text).toBe('shall we start');
   });
 
+  // "และ" is a word. As a character class it split "พลอย" into "พ" and "อย".
+  it('splits a Thai attendee list on the word และ, not on its letters', () => {
+    const thai = ['ผู้เข้าร่วม: สมชาย, พลอย และ อรรถพล', '- สมชาย — เริ่มเลย'].join('\n');
+    const parsed = parseTranscript('th.txt', thai, 'm1');
+    expect(parsed.participants).toEqual(expect.arrayContaining(['สมชาย', 'พลอย', 'อรรถพล']));
+    expect(parsed.participants).not.toContain('พ');
+  });
+
   // A Participant need not be a Speaker — see CONTEXT.md.
   it('includes a listed attendee who never speaks', () => {
     const parsed = parseTranscript('s.txt', raw, 'm1');

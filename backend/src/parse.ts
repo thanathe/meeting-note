@@ -66,7 +66,8 @@ function readMeta(lines: string[]): { title: string | null; date: string | null;
 
     if (/^(meeting|title|topic|หัวข้อ)$/i.test(key)) title ??= value;
     else if (/^(date|วันที่)$/i.test(key)) date ??= toIsoDate(value);
-    else listed.push(...value.split(/[,、และ]|\band\b/).map((n) => n.trim()).filter(Boolean));
+    // "และ" is a word, not a character class — [,、และ] would split "พลอย" at its ล.
+    else listed.push(...value.split(/[,、]|และ|\band\b/).map((n) => n.trim()).filter(Boolean));
   }
   return { title, date, listed };
 }

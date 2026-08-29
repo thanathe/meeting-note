@@ -30,7 +30,9 @@ const RELATIVE_DATE = /\b(?:next|this|end of)\s+(?:week|month|monday|tuesday|wed
 const OWNER_PATTERNS: RegExp[] = [
   /@([A-Za-z฀-๿][\w฀-๿.'-]*(?:\s[A-Z][\w.'-]*)?)/,
   /\b(?:assigned? to|owner is|owned by)\s+([A-Za-z฀-๿][\w฀-๿.'-]*(?:\s[A-Z][\w.'-]*)?)/i,
-  /(?:มอบหมายให้|ฝาก|ให้)\s*(คุณ?\s?[฀-๿A-Za-z][\w฀-๿.'-]*)/,
+  // The honorific is optional as a whole word — `คุณ?` only made its ณ optional,
+  // so an unprefixed Thai name after ฝาก / มอบหมายให้ was never captured.
+  /(?:มอบหมายให้|ฝาก|ให้)\s*((?:คุณ\s?)?[฀-๿A-Za-z][\w฀-๿.'-]*)/,
   /\b([A-Z][a-z][\w.'-]*(?:\s[A-Z][\w.'-]*)?)\s+(?:will|shall|is going to|needs? to)\b/,
 ];
 

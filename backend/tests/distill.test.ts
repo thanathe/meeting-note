@@ -50,6 +50,17 @@ describe('heuristic distiller', () => {
     expect(result.topics[0].actionItems[0].owner).toBeNull();
   });
 
+  // `คุณ?` made only the ณ optional, so an unprefixed Thai name was never captured.
+  it('attributes a Thai ฝาก assignment to the name that follows it', async () => {
+    const result = await distil('- พลอย — ฝาก อรรถพล ช่วยเช็ค config ของ worker');
+    expect(result.topics[0].actionItems[0].owner).toBe('อรรถพล');
+  });
+
+  it('keeps the honorific when the transcript wrote one', async () => {
+    const result = await distil('- พลอย — ฝากคุณสมชาย ช่วยดู log');
+    expect(result.topics[0].actionItems[0].owner).toBe('คุณสมชาย');
+  });
+
   it('keeps a vague deadline as raw text and refuses to resolve it to a date', async () => {
     const result = await distil('Anna: please rewrite the error copy next Friday.');
     const [item] = result.topics[0].actionItems;

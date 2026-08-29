@@ -205,7 +205,7 @@ Three deliverables live in `docs/generated/` and are rebuilt with `npm run docs`
 | File | What it is |
 |------|-----------|
 | `SRS-Meeting-Notes-Distiller.docx` | Software Requirement Specification — scope, vocabulary, 14 functional and 8 non-functional requirements, the API and flag catalogues, and a traceability matrix from every requirement to the code and the tests that verify it. |
-| `Unit-Test-Cases.xlsx` | One row per unit test (31), with module, suite, scenario, expected result, requirement reference, edge-case marker, and `file:line`. |
+| `Unit-Test-Cases.xlsx` | One row per unit test (34), with module, suite, scenario, expected result, requirement reference, edge-case marker, and `file:line`. |
 | `SIT-UAT-Test-Cases.xlsx` | One row per E2E test (10), with preconditions, test data, numbered steps, expected results, and requirement references. |
 
 **They are generated, not hand-written.** The requirement catalogue lives in
@@ -220,6 +220,10 @@ The trade-off: the documents are only as good as what the code says about itself
 test names have to read as sentences ("flags a meeting whose topics reached no
 decision") rather than as labels ("test 4"). That is a constraint worth having anyway.
 
+One wrinkle: `.docx` and `.xlsx` both embed a generation timestamp, so re-running
+`npm run docs` always shows the three files as modified even when every byte of content
+is identical. Only commit them when the content actually changed.
+
 ## CLAUDE.md revision log (Part 2)
 
 The assignment asks that every change to `CLAUDE.md` be explained here.
@@ -231,6 +235,7 @@ The assignment asks that every change to `CLAUDE.md` be explained here.
 | Added "E2E assertions are about meaning, not incidental counts" to the rules | Two E2E assertions were wrong in a way a count hides: `toHaveCount(1)` on `.flag` when the messy-notes sample legitimately raises two flags, and `toBeVisible()` on `.owner-card`, which matches four elements and fails Playwright's strict mode. Neither failure named the behaviour it was supposed to protect. They are now assertions on flag codes and on owner names. |
 | Added "re-run `npm run docs` when adding or renaming a test" to file ownership | The generated workbooks read test titles out of the source. If they are not regenerated, the submitted documents describe a suite that no longer exists. |
 | Noted that `npm run test:e2e` needs Node 20+ and a one-off `npx playwright install chromium` | The E2E suite failed on this machine's default Node 18 with an error that reads as a Playwright bug rather than a version requirement. Two lines in `CLAUDE.md` remove that dead end. |
+| Added the note that regenerating `docs/generated/` always restamps a timestamp | Re-running `npm run docs` marks all three files modified even when the content is byte-identical, because Word and Excel both embed a generation time. Without the note the next session commits noise, or worse, assumes the content drifted. |
 | Added a **Tech stack** table and a **Coding style** section | Part 2 asks for both by name and neither existed. The stack was only inferable from `package.json`, and the style rules that actually matter here were unwritten — cue patterns as module-level constants rather than inline regexes, comments that name the rule they protect, and test names written as sentences because the generated workbooks lift them verbatim. |
 | Pointed the "adding a sample transcript" bullet at the `add-transcript-fixture` skill | The bullet said "add a corresponding E2E test" and stopped there, which is about a third of the actual job. The skill holds the full checklist; `CLAUDE.md` now routes to it instead of duplicating it. |
 
