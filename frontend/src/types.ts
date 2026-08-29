@@ -14,6 +14,10 @@ export interface Topic {
   decisions: string[];
   actionItems: ActionItem[];
 }
+export interface Milestone {
+  label: string;
+  date: string;
+}
 export interface Meeting {
   meetingId: string;
   sourceFilename: string;
@@ -22,6 +26,7 @@ export interface Meeting {
   meetingDate: string | null;
   participants: string[];
   topics: Topic[];
+  milestones: Milestone[];
 }
 export interface Flag {
   code: string;
