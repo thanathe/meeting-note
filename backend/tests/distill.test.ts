@@ -16,6 +16,22 @@ describe('heuristic distiller', () => {
     expect(result.topics.map((t) => t.title)).toEqual(['Checkout', 'Billing']);
   });
 
+  // A header block must not open a Topic of its own ahead of "Topic 1".
+  it('opens one topic per cue even when the transcript carries a header block', async () => {
+    const result = await distil(
+      [
+        'Meeting: Sprint 24 Planning',
+        'Date: 2026-08-10',
+        'Attendees: Anna, Ploy',
+        'Topic 1: Checkout',
+        'Anna: we agreed to rewrite it',
+        'Topic 2: Billing',
+        'Ploy: we agreed to wait',
+      ].join('\n'),
+    );
+    expect(result.topics.map((t) => t.title)).toEqual(['Checkout', 'Billing']);
+  });
+
   it('attributes an action item to the named owner', async () => {
     const result = await distil('Anna: Somchai will draft the migration plan by 2026-08-14.');
     const [item] = result.topics[0].actionItems;

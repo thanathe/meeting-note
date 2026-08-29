@@ -44,6 +44,14 @@ describe('participants', () => {
     expect(parsed.turns.map((t) => t.speaker)).not.toContain('Attendees');
   });
 
+  // The header block used to survive as an unattributed turn, which the Distill
+  // layer then bucketed into a phantom Topic ahead of "Topic 1".
+  it('drops the header block instead of carrying it into the turns', () => {
+    const parsed = parseTranscript('s.txt', raw, 'm1');
+    expect(parsed.turns.map((t) => t.text)).not.toContain('Meeting: Sprint Planning');
+    expect(parsed.turns[0].text).toBe('shall we start');
+  });
+
   // A Participant need not be a Speaker — see CONTEXT.md.
   it('includes a listed attendee who never speaks', () => {
     const parsed = parseTranscript('s.txt', raw, 'm1');

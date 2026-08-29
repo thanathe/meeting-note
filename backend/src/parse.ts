@@ -17,6 +17,14 @@ const TOPIC_LINE = /^\s*(?:topic|agenda|section|หัวข้อ|เรื่�
 /** Header lines like "Attendees: A, B" that must not be read as speaker turns. */
 const META_KEYS = /^(meeting|title|topic|date|time|attendees|participants|present|หัวข้อ|วันที่|ผู้เข้าร่วม|ผู้เข้าประชุม)$/i;
 
+/** readMeta only reads the head of a Transcript; extractTurns skips the same window. */
+const META_WINDOW = 12;
+
+function isMetaLine(line: string): boolean {
+  const m = SPEAKER_COLON.exec(line);
+  return !!m && META_KEYS.test(m[1].trim());
+}
+
 function nonEmptyLines(raw: string): string[] {
   return raw.split(/\r?\n/).filter((l) => l.trim().length > 0);
 }
@@ -49,7 +57,7 @@ function readMeta(lines: string[]): { title: string | null; date: string | null;
   let date: string | null = null;
   const listed: string[] = [];
 
-  for (const line of lines.slice(0, 12)) {
+  for (const line of lines.slice(0, META_WINDOW)) {
     const m = SPEAKER_COLON.exec(line);
     if (!m) continue;
     const key = m[1].trim().toLowerCase();
@@ -75,23 +83,27 @@ export function toIsoDate(value: string): string | null {
 function extractTurns(lines: string[], format: TranscriptFormat): Turn[] {
   const turns: Turn[] = [];
 
-  for (const line of lines) {
+  lines.forEach((line, index) => {
     // Topic markers are handed to the Distill layer intact, unattributed.
-    if (TOPIC_LINE.test(line)) { turns.push({ time: null, speaker: null, text: line.trim() }); continue; }
+    if (TOPIC_LINE.test(line)) { turns.push({ time: null, speaker: null, text: line.trim() }); return; }
+
+    // Header lines ("Meeting:", "Date:", "Attendees:") are consumed by readMeta.
+    // Dropping them here stops the header block becoming a phantom Topic downstream.
+    if (index < META_WINDOW && isMetaLine(line)) return;
 
     if (format === 'timestamped') {
       const m = TIMESTAMPED.exec(line);
-      if (m) { turns.push({ time: m[1], speaker: m[2].trim(), text: m[3].trim() }); continue; }
+      if (m) { turns.push({ time: m[1], speaker: m[2].trim(), text: m[3].trim() }); return; }
     }
     if (format === 'header-bullet') {
       const m = HEADER_BULLET.exec(line);
-      if (m) { turns.push({ time: null, speaker: m[1].trim(), text: m[2].trim() }); continue; }
+      if (m) { turns.push({ time: null, speaker: m[1].trim(), text: m[2].trim() }); return; }
     }
     if (format === 'speaker-colon' || format === 'timestamped') {
       const m = SPEAKER_COLON.exec(line);
       if (m && !META_KEYS.test(m[1].trim())) {
         turns.push({ time: null, speaker: m[1].trim(), text: m[2].trim() });
-        continue;
+        return;
       }
     }
     // Unattributed line: append to the previous turn, or stand alone with no Speaker.
@@ -99,7 +111,7 @@ function extractTurns(lines: string[], format: TranscriptFormat): Turn[] {
     const prev = turns[turns.length - 1];
     if (prev && format !== 'unstructured') prev.text += ' ' + text;
     else turns.push({ time: null, speaker: null, text });
-  }
+  });
   return turns;
 }
 
