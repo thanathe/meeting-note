@@ -55,15 +55,22 @@ export function App() {
 
   const downloadDocx = useCallback(async () => {
     if (!run) return;
-    const res = await fetch(`/api/runs/${run.id}/document.docx`);
-    if (!res.ok) throw new Error('Could not download document.');
-    const blob = await res.blob();
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `meeting-summary-${run.id}.docx`;
-    a.click();
-    URL.revokeObjectURL(url);
+    // Runs live in the backend's memory, so a restart turns this into a 404.
+    // Throwing here would be an unhandled rejection and the click would look ignored.
+    try {
+      const res = await fetch(`/api/runs/${run.id}/document.docx`);
+      if (!res.ok) throw new Error('Could not download the document — try distilling again.');
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `meeting-summary-${run.id}.docx`;
+      a.click();
+      URL.revokeObjectURL(url);
+      setError(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Could not download the document.');
+    }
   }, [run]);
 
   const onDrop = (e: React.DragEvent) => {
